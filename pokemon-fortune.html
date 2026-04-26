@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポケモン生年月日占い</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0015;
+      --surface: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.10);
+      --gold: #f5c842;
+      --gold2: #c9922a;
+      --text: #f0e8ff;
+      --muted: #9980bb;
+      --star: #e0d0ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { overflow-x: hidden; }
+
+    body {
+      font-family: 'Noto Serif JP', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 星空背景 */
+    #stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* メインコンテナ */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ヘッダー */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header .crest {
+      font-size: 2.8rem;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 16px rgba(245,200,66,0.6));
+    }
+
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, #f5c842, #e0a020, #f5c842);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin-bottom: 6px;
+    }
+
+    .header .tagline {
+      color: var(--muted);
+      font-size: 0.82rem;
+      letter-spacing: 2px;
+    }
+
+    /* 区切り線 */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--gold2);
+      font-size: 0.9rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+    }
+
+    /* 入力カード */
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 20px;
+      backdrop-filter: blur(12px);
+    }
+
+    .input-label {
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .date-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .date-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .date-group label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .date-group select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 9px 6px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      text-align: center;
+    }
+
+    .date-group select:focus {
+      border-color: var(--gold);
+    }
+
+    .date-sep {
+      font-size: 1.2rem;
+      color: var(--gold2);
+      margin-top: 18px;
+    }
+
+    .btn-fortune {
+      display: block;
+      width: 100%;
+      margin-top: 28px;
+      padding: 16px;
+      background: linear-gradient(135deg, #c9922a, #f5c842, #c9922a);
+      background-size: 200% 100%;
+      border: none;
+      border-radius: 999px;
+      color: #1a0d00;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: background-position 0.4s, transform 0.15s, box-shadow 0.3s;
+      box-shadow: 0 4px 20px rgba(200,146,42,0.4);
+    }
+
+    .btn-fortune:hover {
+      background-position: 100% 0;
+      box-shadow: 0 6px 28px rgba(200,146,42,0.6);
+    }
+
+    .btn-fortune:active { transform: scale(0.97); }
+    .btn-fortune:disabled { opacity: 0.5; cursor: wait; }
+
+    /* ローディング */
+    #loading {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
+
+    .orb {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #c9d6ff, #3a1a6e);
+      margin: 0 auto 20px;
+      box-shadow: 0 0 30px rgba(150,100,255,0.6), inset 0 0 20px rgba(255,255,255,0.1);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(150,100,255,0.6); }
+      50% { transform: scale(1.1); box-shadow: 0 0 50px rgba(150,100,255,0.9); }
+    }
+
+    #loading p { color: var(--muted); font-size: 0.88rem; letter-spacing: 2px; }
+
+    /* 結果エリア */
+    #result {
+      display: none;
+      margin-top: 32px;
+    }
+
+    /* ポケモンカード */
+    .poke-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poke-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--type-color, rgba(150,100,255,0.2)) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .poke-number {
+      position: absolute;
+      top: 16px; right: 20px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+    }
+
+    .poke-img-wrap {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 12px;
+    }
+
+    .poke-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 20px var(--type-color, rgba(150,100,255,0.4)));
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    .poke-img.show { opacity: 1; transform: translateY(0); }
+
+    .poke-name {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .types {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .type-badge {
+      padding: 3px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .destiny-msg {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(245,200,66,0.06);
+      border: 1px solid rgba(245,200,66,0.15);
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: #ffe8b0;
+    }
+
+    /* 運勢グリッド */
+    .fortune-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .fortune-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 14px;
+      text-align: center;
+    }
+
+    .fortune-item.wide {
+      grid-column: 1 / -1;
+    }
+
+    .fortune-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .fortune-stars {
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .fortune-text {
+      font-size: 0.78rem;
+      color: #c8b8e8;
+      line-height: 1.6;
+    }
+
+    /* ラッキーアイテム */
+    .lucky-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .lucky-chip {
+      background: rgba(245,200,66,0.10);
+      border: 1px solid rgba(245,200,66,0.25);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.78rem;
+      color: var(--gold);
+    }
+
+    /* もう一度ボタン */
+    .btn-retry {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid var(--gold2);
+      border-radius: 999px;
+      color: var(--gold);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-retry:hover { background: rgba(245,200,66,0.08); }
+
+    /* タイプカラー */
+    .type-normal   { background: #9fa19f; color: #fff; }
+    .type-fire     { background: #e62829; color: #fff; }
+    .type-water    { background: #2980ef; color: #fff; }
+    .type-grass    { background: #3fa129; color: #fff; }
+    .type-electric { background: #fac000; color: #222; }
+    .type-ice      { background: #3dcef3; color: #222; }
+    .type-fighting { background: #ff8000; color: #fff; }
+    .type-poison   { background: #9141cb; color: #fff; }
+    .type-ground   { background: #915121; color: #fff; }
+    .type-flying   { background: #81b9ef; color: #222; }
+    .type-psychic  { background: #ef4179; color: #fff; }
+    .type-bug      { background: #91a119; color: #fff; }
+    .type-rock     { background: #afa981; color: #222; }
+    .type-ghost    { background: #704170; color: #fff; }
+    .type-dragon   { background: #5060e1; color: #fff; }
+    .type-dark     { background: #49392f; color: #fff; }
+    .type-steel    { background: #60a1b8; color: #222; }
+    .type-fairy    { background: #ef70ef; color: #fff; }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+
+  <div class="header">
+    <div class="crest">✦ ✧ ✦</div>
+    <h1>ポケモン生年月日占い</h1>
+    <p class="tagline">あなたの守護ポケモンを知る</p>
+  </div>
+
+  <div class="input-card">
+    <p class="input-label">生 年 月 日 を 選 ん で く だ さ い</p>
+    <div class="date-row">
+      <div class="date-group">
+        <label>年</label>
+        <select id="selYear" style="width:100px"></select>
+      </div>
+      <div class="date-sep">／</div>
+      <div class="date-group">
+        <label>月</label>
+        <select id="selMonth" style="width:68px"></select>
+      </div>
+      <div class="date-sep">／</div>
+      <div class="date-group">
+        <label>日</label>
+        <select id="selDay" style="width:68px"></select>
+      </div>
+    </div>
+    <button class="btn-fortune" id="btnFortune" onclick="startFortune()">✦ 占 う ✦</button>
+  </div>
+
+  <div id="loading">
+    <div class="orb"></div>
+    <p>守護ポケモンを召喚中…</p>
+  </div>
+
+  <div id="result">
+    <div class="divider">✦ 鑑定結果 ✦</div>
+
+    <div class="poke-card" id="pokeCard">
+      <span class="poke-number" id="pokeNum"></span>
+      <div class="poke-img-wrap">
+        <img class="poke-img" id="pokeImg" alt="" />
+      </div>
+      <div class="poke-name" id="pokeName"></div>
+      <div class="types" id="pokeTypes"></div>
+      <div class="destiny-msg" id="destinyMsg"></div>
+    </div>
+
+    <div class="fortune-grid" id="fortuneGrid"></div>
+
+    <button class="btn-retry" onclick="resetForm()">← 別の生年月日で占う</button>
+  </div>
+
+</div>
+
+<script>
+/* ===== 星空 ===== */
+(function(){
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  let W, H, stars;
+
+  function init() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+    stars = Array.from({length: 200}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.4+0.2,
+      a: Math.random(),
+      da: (Math.random()-0.5)*0.004
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s => {
+      s.a = Math.max(0.1, Math.min(1, s.a + s.da));
+      if (s.a <= 0.1 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(224,208,255,${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  init();
+  draw();
+  window.addEventListener('resize', init);
+})();
+
+/* ===== セレクト初期化 ===== */
+(function(){
+  const y = document.getElementById('selYear');
+  const m = document.getElementById('selMonth');
+  const d = document.getElementById('selDay');
+  const now = new Date();
+  for (let i = now.getFullYear(); i >= 1924; i--) {
+    const o = new Option(i+'年', i);
+    if (i === 1990) o.selected = true;
+    y.add(o);
+  }
+  for (let i = 1; i <= 12; i++) m.add(new Option(i+'月', i));
+  m.value = 1;
+  updateDays();
+
+  function updateDays() {
+    const yv = +y.value, mv = +m.value;
+    const max = new Date(yv, mv, 0).getDate();
+    const cur = +d.value || 1;
+    d.innerHTML = '';
+    for (let i = 1; i <= max; i++) d.add(new Option(i+'日', i));
+    d.value = Math.min(cur, max);
+  }
+
+  y.addEventListener('change', updateDays);
+  m.addEventListener('change', updateDays);
+})();
+
+/* ===== ポケモン選択ロジック =====
+   生年月日から守護ポケモンIDを決定する。
+   同じ生年月日は常に同じポケモンを返す（決定論的）。
+   LCGベースの軽量ハッシュを使用。
+*/
+function dateToPokeId(year, month, day) {
+  let seed = year * 13 + month * 31 + day * 7;
+  // LCG: linear congruential generator
+  seed = (seed ^ (seed >> 4)) * 0x45d9f3b;
+  seed = (seed ^ (seed >> 15)) >>> 0;
+  return (seed % 898) + 1; // ポケモンNo.1〜898
+}
+
+/* ===== タイプカラー（CSS変数用 hex） ===== */
+const TYPE_COLORS = {
+  normal:'#9fa19f',fire:'#e62829',water:'#2980ef',grass:'#3fa129',
+  electric:'#fac000',ice:'#3dcef3',fighting:'#ff8000',poison:'#9141cb',
+  ground:'#915121',flying:'#81b9ef',psychic:'#ef4179',bug:'#91a119',
+  rock:'#afa981',ghost:'#704170',dragon:'#5060e1',dark:'#49392f',
+  steel:'#60a1b8',fairy:'#ef70ef'
+};
+
+/* ===== タイプ別・占い文 ===== */
+const TYPE_DESTINY = {
+  normal:   { personality:'穏やかで誰にでも親しみやすく、バランス感覚に優れています。日常の中に幸せを見つける達人。',   element:'地', lucky_color:'クリーム' },
+  fire:     { personality:'情熱的でエネルギッシュ。強いリーダーシップと行動力を持ち、周囲を熱く鼓舞する存在です。', element:'火', lucky_color:'赤・オレンジ' },
+  water:    { personality:'感受性が豊かで、直感力に優れています。柔軟性と包容力があり、深い人間関係を築けます。',   element:'水', lucky_color:'水色・紺' },
+  grass:    { personality:'穏やかで忍耐強く、自然体が魅力。人を癒す力を持ち、着実に成長し続ける意志の人です。',     element:'木', lucky_color:'緑・ミント' },
+  electric: { personality:'革新的で行動が早く、閃きと発想力が武器。場の空気を一変させる電撃的な魅力があります。',   element:'雷', lucky_color:'黄・ゴールド' },
+  ice:      { personality:'冷静な判断力と透明感が特徴。独自の美意識を持ち、静かに深く物事を見通す力があります。',   element:'氷', lucky_color:'白・水色' },
+  fighting: { personality:'努力と根性の人。困難を正面から突破する勇気と、公正さへの強いこだわりがあります。',       element:'闘', lucky_color:'赤・金' },
+  poison:   { personality:'個性的で神秘的な魅力の持ち主。毒のある言葉も鋭い洞察から生まれ、本質を突きます。',       element:'毒', lucky_color:'紫・深緑' },
+  ground:   { personality:'堅実でどっしりとした安定感が持ち味。大地のように周囲の支えになる頼りがいがあります。',   element:'土', lucky_color:'茶・ベージュ' },
+  flying:   { personality:'自由を愛し、高い視野で物事を俯瞰できます。束縛を嫌い、新しい地へ羽ばたく冒険家。',     element:'風', lucky_color:'空色・白' },
+  psychic:  { personality:'直感と霊感に優れた神秘的な存在。深い洞察力で人の心を読み取り、真実に迫ります。',       element:'心', lucky_color:'ピンク・紫' },
+  bug:      { personality:'成長と変容の象徴。地道な努力で殻を破り、やがて大きな飛躍を遂げる潜在能力を秘めています。', element:'自然', lucky_color:'黄緑・金' },
+  rock:     { personality:'意志が強く揺るぎない信念の人。長い時間をかけて磨かれた宝石のような価値があります。',     element:'岩', lucky_color:'グレー・深紅' },
+  ghost:    { personality:'謎めいた魅力と深い精神世界を持ちます。見えないものを感じ取る霊的な感受性があります。',   element:'霊', lucky_color:'黒・濃紫' },
+  dragon:   { personality:'威風堂々とした存在感と圧倒的なカリスマ性。高い目標に向かって全力で飛翔する龍の魂。',   element:'龍', lucky_color:'紺・金' },
+  dark:     { personality:'クールで独立心が強く、自分の信念を貫きます。表と裏を知るからこそ光の価値も理解できます。', element:'闇', lucky_color:'黒・銀' },
+  steel:    { personality:'強固な意志と完璧主義が特徴。どんな困難にも折れない心と、鋼のような誠実さを持ちます。',   element:'金', lucky_color:'銀・白' },
+  fairy:    { personality:'不思議な魅力と純粋な心の持ち主。周囲に夢と希望を与え、奇跡を引き寄せる力があります。', element:'夢', lucky_color:'ピンク・白' },
+};
+
+/* ===== 運勢カテゴリ ===== */
+const FORTUNE_MSGS = {
+  love: [
+    ['相手への正直な気持ちが吉を呼びます', '素直な言葉が心を動かす日', '新しい出会いのチャンスあり'],
+    ['じっくりと関係を深める時期', '信頼が愛に変わる予感', '縁のある人との再会に注目'],
+    ['自分磨きが恋愛運を高めます', '焦りは禁物、自然体で'],
+  ],
+  work: [
+    ['積極的な行動が道を開きます', '新しいプロジェクトに吉あり', 'チームワークで大きな成果'],
+    ['細部への注意が評価を上げます', '計画通りに進む安定期', '後輩や仲間のサポートで信頼アップ'],
+    ['地道な努力が実を結ぶ時期', '一歩一歩が確かな前進'],
+  ],
+  money: [
+    ['予期せぬ収入の可能性あり', '賢い投資判断が吉', '節約の意識が将来を豊かにします'],
+    ['堅実な財務管理が実を結ぶ', '焦った決断は損のもと', '長期的な視点で安定を'],
+    ['思わぬ臨時収入のチャンス', '欲張らず感謝の気持ちを'],
+  ],
+  health: [
+    ['エネルギー満ち溢れる好調期', '新しい運動習慣を始めるのに最適', 'バランスのよい食事で運気アップ'],
+    ['休息も大切なパワーチャージ', '睡眠を十分に取ることが吉', '無理は禁物、自分のペースで'],
+    ['心身ともに安定した時期', '自然の中でリフレッシュを'],
+  ],
+};
+
+function statToStars(value, max=255) {
+  const ratio = value / max;
+  const stars = Math.round(ratio * 4) + 1; // 1〜5
+  return '★'.repeat(Math.min(stars,5)) + '☆'.repeat(Math.max(0, 5-Math.min(stars,5)));
+}
+
+function pickMsg(arr, seed) {
+  const pool = arr.flat();
+  return pool[seed % pool.length];
+}
+
+/* ===== 日本語名キャッシュ ===== */
+const jaNameCache = {};
+async function fetchJaName(id) {
+  if (jaNameCache[id]) return jaNameCache[id];
+  try {
+    const r = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
+    if (!r.ok) return null;
+    const d = await r.json();
+    const entry = d.names.find(n=>n.language.name==='ja-Hrkt') || d.names.find(n=>n.language.name==='ja');
+    jaNameCache[id] = entry?.name || null;
+    return jaNameCache[id];
+  } catch { return null; }
+}
+
+/* ===== 占いメイン ===== */
+async function startFortune() {
+  const year  = +document.getElementById('selYear').value;
+  const month = +document.getElementById('selMonth').value;
+  const day   = +document.getElementById('selDay').value;
+
+  document.getElementById('btnFortune').disabled = true;
+  document.querySelector('.input-card').style.opacity = '0.4';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('result').style.display = 'none';
+
+  const pokeId = dateToPokeId(year, month, day);
+
+  try {
+    const [res, jaName] = await Promise.all([
+      fetch(`https://pokeapi.co/api/v2/pokemon/${pokeId}`),
+      fetchJaName(pokeId),
+    ]);
+    if (!res.ok) throw new Error();
+    const p = await res.json();
+
+    const primaryType = p.types[0].type.name;
+    const typeColor = TYPE_COLORS[primaryType] || '#9980bb';
+    const destinyInfo = TYPE_DESTINY[primaryType] || TYPE_DESTINY.normal;
+    const displayName = jaName || p.name;
+
+    const statsMap = {};
+    p.stats.forEach(s => { statsMap[s.stat.name] = s.base_stat; });
+    const seed = year + month * 100 + day * 10000;
+
+    // ラッキーナンバー（ポケモンIDから）
+    const luckyNum = ((pokeId * 7 + month * 3 + day) % 9) + 1;
+
+    // 総合運（BST合計を600基準に換算）
+    const bst = Object.values(statsMap).reduce((a,b)=>a+b,0);
+    const overallStars = Math.min(5, Math.max(1, Math.round(bst / 600 * 5)));
+    const overallStr = '★'.repeat(overallStars) + '☆'.repeat(5-overallStars);
+
+    // カードに型カラー注入
+    const card = document.getElementById('pokeCard');
+    card.style.setProperty('--type-color', typeColor + '55');
+
+    // ポケモン画像
+    const imgUrl = p.sprites?.other?.['official-artwork']?.front_default || p.sprites?.front_default || '';
+    const img = document.getElementById('pokeImg');
+    img.src = imgUrl;
+    img.alt = displayName;
+    img.style.filter = `drop-shadow(0 4px 24px ${typeColor}88)`;
+    img.onload = () => img.classList.add('show');
+
+    document.getElementById('pokeNum').textContent = `No.${String(p.id).padStart(3,'0')}`;
+    document.getElementById('pokeName').textContent = displayName;
+    document.getElementById('pokeTypes').innerHTML =
+      p.types.map(t=>`<span class="type-badge type-${t.type.name}">${typeJa(t.type.name)}</span>`).join('');
+    document.getElementById('destinyMsg').innerHTML =
+      `<strong>【${destinyInfo.element}の守護】</strong><br>${destinyInfo.personality}`;
+
+    // 運勢グリッド
+    const grid = document.getElementById('fortuneGrid');
+    grid.innerHTML = `
+      <div class="fortune-item wide">
+        <div class="fortune-label">✦ 総 合 運 ✦</div>
+        <div class="fortune-stars" style="color:var(--gold)">${overallStr}</div>
+        <div class="fortune-text">あなたの守護ポケモンの基礎ステータス合計は${bst}。${bst>=500?'強大な力があなたを守っています。':'大いなる成長の可能性を秘めています。'}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">💕 恋 愛 運</div>
+        <div class="fortune-stars">${statToStars(statsMap['special-attack']||50)}</div>
+        <div class="fortune-text">${pickMsg(FORTUNE_MSGS.love, seed+1)}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">💼 仕 事 運</div>
+        <div class="fortune-stars">${statToStars(statsMap['attack']||50)}</div>
+        <div class="fortune-text">${pickMsg(FORTUNE_MSGS.work, seed+2)}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">💰 金 運</div>
+        <div class="fortune-stars">${statToStars(statsMap['speed']||50)}</div>
+        <div class="fortune-text">${pickMsg(FORTUNE_MSGS.money, seed+3)}</div>
+      </div>
+      <div class="fortune-item">
+        <div class="fortune-label">🌿 健 康 運</div>
+        <div class="fortune-stars">${statToStars(statsMap['hp']||50)}</div>
+        <div class="fortune-text">${pickMsg(FORTUNE_MSGS.health, seed+4)}</div>
+      </div>
+      <div class="fortune-item wide">
+        <div class="fortune-label">✨ ラ ッ キ ー</div>
+        <div class="lucky-row">
+          <span class="lucky-chip">ラッキーナンバー ${luckyNum}</span>
+          <span class="lucky-chip">ラッキーカラー ${destinyInfo.lucky_color}</span>
+          <span class="lucky-chip">属性 ${destinyInfo.element}</span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+
+  } catch {
+    document.getElementById('loading').style.display = 'none';
+    alert('データの取得に失敗しました。もう一度お試しください。');
+    document.getElementById('btnFortune').disabled = false;
+    document.querySelector('.input-card').style.opacity = '1';
+  }
+}
+
+function resetForm() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('btnFortune').disabled = false;
+  document.querySelector('.input-card').style.opacity = '1';
+  document.getElementById('pokeImg').classList.remove('show');
+}
+
+function typeJa(t) {
+  const map = {
+    normal:'ノーマル',fire:'ほのお',water:'みず',grass:'くさ',electric:'でんき',
+    ice:'こおり',fighting:'かくとう',poison:'どく',ground:'じめん',flying:'ひこう',
+    psychic:'エスパー',bug:'むし',rock:'いわ',ghost:'ゴースト',dragon:'ドラゴン',
+    dark:'あく',steel:'はがね',fairy:'フェアリー'
+  };
+  return map[t] || t;
+}
+</script>
+</body>
+</html>
