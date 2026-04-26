@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>シンプルアラームアプリ</title>
+    <title>中世の鐘楼 — アラーム</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,157 +13,298 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Cinzel', serif;
+            background-color: #0d0a06;
+            background-image:
+                radial-gradient(ellipse at top, #1e1208 0%, #0d0a06 70%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
+        }
+
+        /* 背景の炎パーティクル */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(180, 80, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(180, 80, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
+            position: relative;
+            background: linear-gradient(160deg, #2a1d0e 0%, #1a1008 60%, #221508 100%);
+            border: 1px solid #7a5c2e;
+            padding: 48px 40px 40px;
+            max-width: 420px;
             width: 90%;
+            text-align: center;
+            box-shadow:
+                0 0 0 1px #3d2b12,
+                0 0 40px rgba(180, 100, 0, 0.2),
+                inset 0 1px 0 rgba(200, 160, 60, 0.15);
+        }
+
+        /* 四隅の装飾 */
+        .container::before,
+        .container::after {
+            content: '✦';
+            position: absolute;
+            color: #b8862a;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        .container::before { top: 10px; left: 14px; }
+        .container::after  { bottom: 10px; right: 14px; }
+
+        .corner-tr, .corner-bl {
+            position: absolute;
+            color: #b8862a;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        .corner-tr { top: 10px; right: 14px; }
+        .corner-bl { bottom: 10px; left: 14px; }
+
+        /* 上下の装飾ライン */
+        .deco-line {
+            width: 100%;
+            text-align: center;
+            color: #7a5c2e;
+            font-size: 13px;
+            letter-spacing: 6px;
+            margin: 0 0 24px;
+            opacity: 0.7;
+        }
+        .deco-line.bottom {
+            margin: 24px 0 0;
         }
 
         h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
+            font-family: 'Cinzel Decorative', serif;
+            color: #d4a843;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(212, 168, 67, 0.5);
+            margin-bottom: 6px;
         }
 
+        .subtitle {
+            color: #7a6040;
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        /* 現在時刻 */
+        .time-display {
+            font-family: 'Cinzel', serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: #e8c060;
+            letter-spacing: 6px;
+            text-shadow:
+                0 0 20px rgba(232, 192, 96, 0.6),
+                0 0 60px rgba(232, 192, 96, 0.2);
+            min-height: 70px;
+            margin: 8px 0 24px;
+        }
+
+        /* 仕切り線 */
+        .divider {
+            border: none;
+            border-top: 1px solid #3d2b12;
+            margin: 20px 0;
+            position: relative;
+        }
+        .divider::after {
+            content: '⚜';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1008;
+            padding: 0 10px;
+            color: #7a5c2e;
+            font-size: 14px;
+        }
+
+        /* 入力グループ */
         .input-group {
             margin-bottom: 20px;
         }
 
         label {
             display: block;
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 8px;
-            font-weight: 600;
+            color: #9a7840;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
         }
 
         input[type="time"] {
             width: 100%;
             padding: 12px;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            font-size: 18px;
+            background: #110c05;
+            border: 1px solid #5a4020;
+            border-top-color: #3a2810;
+            color: #d4a843;
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
             text-align: center;
+            letter-spacing: 4px;
+            outline: none;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        .time-display {
-            font-size: 48px;
-            font-weight: bold;
-            color: #667eea;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            min-height: 60px;
+        input[type="time"]:focus {
+            border-color: #b8862a;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 0 12px rgba(184, 134, 42, 0.3);
         }
 
+        /* ボタン */
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 8px;
         }
 
         button {
             flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 13px 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
+            border: 1px solid;
+            transition: all 0.25s;
+            position: relative;
         }
 
         .btn-set {
-            background: #667eea;
-            color: white;
+            background: linear-gradient(180deg, #4a3010 0%, #2e1e08 100%);
+            border-color: #8a6428;
+            border-bottom-color: #3a2410;
+            color: #e8c060;
+            box-shadow: 0 2px 0 #1a0e04, 0 0 12px rgba(184,134,42,0.1);
         }
 
         .btn-set:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
+            background: linear-gradient(180deg, #5a3e18 0%, #3a2810 100%);
+            box-shadow: 0 2px 0 #1a0e04, 0 0 20px rgba(184,134,42,0.25);
+            color: #f0d070;
+        }
+
+        .btn-set:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #1a0e04;
         }
 
         .btn-stop {
-            background: #f56565;
-            color: white;
+            background: linear-gradient(180deg, #3a1010 0%, #220808 100%);
+            border-color: #6a2828;
+            border-bottom-color: #2a1010;
+            color: #c06060;
+            box-shadow: 0 2px 0 #100404;
         }
 
-        .btn-stop:hover {
-            background: #e53e3e;
-            transform: translateY(-2px);
+        .btn-stop:hover:not(:disabled) {
+            background: linear-gradient(180deg, #4a1818 0%, #2e1010 100%);
+            color: #e08080;
+            box-shadow: 0 2px 0 #100404, 0 0 16px rgba(180, 60, 60, 0.2);
+        }
+
+        .btn-stop:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #100404;
         }
 
         .btn-stop:disabled {
-            background: #ccc;
+            background: #1a1208;
+            border-color: #2a2010;
+            color: #3a3020;
             cursor: not-allowed;
-            transform: none;
+            box-shadow: none;
         }
 
+        /* ステータス */
         .status {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 14px;
+            margin-top: 18px;
+            padding: 10px 14px;
+            font-size: 11px;
+            letter-spacing: 2px;
             min-height: 20px;
+            border: 1px solid transparent;
         }
 
         .status.active {
-            background: #c6f6d5;
-            color: #22543d;
+            border-color: #4a3c14;
+            background: rgba(184, 134, 42, 0.08);
+            color: #c8a040;
         }
 
         .status.inactive {
-            background: #fed7d7;
-            color: #742a2a;
+            border-color: #3a1a1a;
+            background: rgba(140, 60, 60, 0.08);
+            color: #8a4040;
         }
 
+        /* アラーム発動アニメーション */
         .alarm-ringing {
-            animation: pulse 0.5s infinite;
+            animation: toll 0.6s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes toll {
+            0%, 100% { transform: rotate(0deg); box-shadow: 0 0 0 1px #3d2b12, 0 0 40px rgba(180, 100, 0, 0.2), inset 0 1px 0 rgba(200,160,60,0.15); }
+            25%       { transform: rotate(-1deg); box-shadow: 0 0 0 1px #7a5c2e, 0 0 60px rgba(220, 150, 0, 0.4), inset 0 1px 0 rgba(200,160,60,0.15); }
+            75%       { transform: rotate(1deg);  box-shadow: 0 0 0 1px #7a5c2e, 0 0 60px rgba(220, 150, 0, 0.4), inset 0 1px 0 rgba(200,160,60,0.15); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>⏰ アラームアプリ</h1>
+    <div class="container" id="mainContainer">
+        <span class="corner-tr">✦</span>
+        <span class="corner-bl">✦</span>
+
+        <div class="deco-line">── ⟡ ──────────────── ⟡ ──</div>
+
+        <h1>🔔 鐘楼の目覚め</h1>
+        <div class="subtitle">Medieval Alarm — Anno Domini</div>
+
+        <div class="time-display" id="timeDisplay">00:00</div>
+
+        <hr class="divider">
 
         <div class="input-group">
-            <label for="alarmTime">アラーム時刻を設定</label>
+            <label for="alarmTime">⚔ 起床の刻を定めよ ⚔</label>
             <input type="time" id="alarmTime" value="07:00">
         </div>
 
-        <div class="time-display" id="timeDisplay">07:00</div>
-
         <div class="button-group">
-            <button class="btn-set" onclick="setAlarm()">セット</button>
-            <button class="btn-stop" id="stopBtn" disabled onclick="stopAlarm()">停止</button>
+            <button class="btn-set" onclick="setAlarm()">⚜ 布告する</button>
+            <button class="btn-stop" id="stopBtn" disabled onclick="stopAlarm()">🛡 沈黙せよ</button>
         </div>
 
-        <div class="status" id="status">アラームの準備完了</div>
+        <div class="status" id="status">汝の起床の刻を定めよ</div>
+
+        <div class="deco-line bottom">── ⟡ ──────────────── ⟡ ──</div>
     </div>
 
     <script>
         let alarmTime = null;
         let isAlarmActive = false;
         let checkInterval = null;
-        let alarmAudio = null;
 
-        // ページ読み込み時に時刻表示を更新
         function updateCurrentTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -170,15 +312,13 @@
             document.getElementById('timeDisplay').textContent = `${hours}:${minutes}`;
         }
 
-        // 毎秒、現在時刻を更新してアラームをチェック
         setInterval(updateCurrentTime, 1000);
         updateCurrentTime();
 
         function setAlarm() {
             const input = document.getElementById('alarmTime').value;
-
             if (!input) {
-                alert('時刻を選択してください');
+                alert('時刻を定めよ');
                 return;
             }
 
@@ -187,23 +327,18 @@
             document.getElementById('stopBtn').disabled = false;
 
             const status = document.getElementById('status');
-            status.textContent = `✅ アラームをセット：${alarmTime}`;
+            status.textContent = `⚜ ${alarmTime} — 鐘は鳴り響くであろう`;
             status.className = 'status active';
 
-            // アラームをチェック開始
             if (checkInterval) clearInterval(checkInterval);
             checkInterval = setInterval(checkAlarm, 1000);
         }
 
         function checkAlarm() {
             if (!isAlarmActive) return;
-
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTime = `${hours}:${minutes}`;
-
-            if (currentTime === alarmTime) {
+            const current = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            if (current === alarmTime) {
                 ringAlarm();
                 isAlarmActive = false;
             }
@@ -211,59 +346,37 @@
 
         function ringAlarm() {
             const status = document.getElementById('status');
-            status.textContent = '🔔 アラーム発動！';
-            status.className = 'status active alarm-ringing';
-            document.querySelector('.container').classList.add('alarm-ringing');
-
-            // ブラウザ音を再生（簡易版）
+            status.textContent = '🔔 目覚めの刻が来た！立て、勇者よ！';
+            status.className = 'status active';
+            document.getElementById('mainContainer').classList.add('alarm-ringing');
             playAlarmSound();
-
-            // 10秒間アラームを鳴らす
-            setTimeout(() => {
-                if (isAlarmActive === false) {
-                    stopAlarm();
-                }
-            }, 10000);
+            setTimeout(() => { if (!isAlarmActive) stopAlarm(); }, 10000);
         }
 
         function playAlarmSound() {
-            // Web Audio API でビープ音を生成
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.frequency.value = 800; // Hz
-            oscillator.type = 'sine';
-
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
-
-            // 3回繰り返す
-            for (let i = 1; i < 3; i++) {
-                const osc = audioContext.createOscillator();
-                osc.connect(gainNode);
-                osc.frequency.value = 800;
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const times = [0, 0.7, 1.4];
+            times.forEach(t => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 520;
                 osc.type = 'sine';
-                osc.start(audioContext.currentTime + i * 0.6);
-                osc.stop(audioContext.currentTime + i * 0.6 + 0.5);
-            }
+                gain.gain.setValueAtTime(0.4, ctx.currentTime + t);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.6);
+                osc.start(ctx.currentTime + t);
+                osc.stop(ctx.currentTime + t + 0.6);
+            });
         }
 
         function stopAlarm() {
             isAlarmActive = false;
             if (checkInterval) clearInterval(checkInterval);
-
             document.getElementById('stopBtn').disabled = true;
-            document.querySelector('.container').classList.remove('alarm-ringing');
-
+            document.getElementById('mainContainer').classList.remove('alarm-ringing');
             const status = document.getElementById('status');
-            status.textContent = 'アラーム停止';
+            status.textContent = '🛡 鐘楼は再び静寂に包まれた';
             status.className = 'status inactive';
         }
     </script>
