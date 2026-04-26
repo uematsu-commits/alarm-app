@@ -1,0 +1,15 @@
+# 公開しないファイル
+*.docx
+*.txt
+politician.html
+タスク管理.html
+timer.html
+「私のGoogle
+Untitled
+.DS_Store
+
+# Claude Code 設定
+.claude/
+
+# cursor-example（別プロジェクト）
+cursor-example/
