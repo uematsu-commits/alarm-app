@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ランダムポケモン図鑑</title>
+  <title>ポケモンバトル</title>
   <style>
     :root {
-      --bg: #1a1a2e;
-      --card: #16213e;
-      --card-border: #0f3460;
+      --bg: #0f0f1a;
+      --surface: #16213e;
+      --border: #0f3460;
       --accent: #e94560;
+      --gold: #f5c518;
       --text: #eaeaea;
-      --muted: #888;
+      --muted: #7a8098;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,141 +22,174 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      padding: 24px 16px 48px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 24px;
     }
 
     h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
       color: #fff;
+      text-align: center;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 32px;
-    }
-
-    /* カード */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 32px 28px 28px;
-      width: 100%;
-      max-width: 360px;
+      font-size: 0.82rem;
+      margin-bottom: 28px;
       text-align: center;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
+    }
+
+    /* ── VS エリア ── */
+    .arena {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: start;
+      width: 100%;
+      max-width: 840px;
+    }
+
+    .vs-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 80px;
+      gap: 12px;
+    }
+
+    .vs-badge {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(233,69,96,0.6);
+      letter-spacing: 2px;
+    }
+
+    /* ── ポケモンカード ── */
+    .pcard {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 16px 18px;
+      text-align: center;
       position: relative;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.4s, box-shadow 0.4s;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(233, 69, 96, 0.25);
-      border-color: var(--accent);
+    .pcard.winner {
+      border-color: var(--gold);
+      box-shadow: 0 0 28px rgba(245,197,24,0.35);
     }
 
-    .card:active { transform: translateY(-1px); }
+    .pcard.loser {
+      opacity: 0.45;
+      filter: grayscale(0.6);
+    }
 
-    /* ポケモン番号 */
-    .pokemon-id {
+    .pcard-id {
       position: absolute;
-      top: 16px;
-      right: 20px;
+      top: 12px;
+      right: 14px;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       font-weight: 600;
     }
 
-    /* 画像エリア */
-    .img-wrap {
-      width: 180px;
-      height: 180px;
-      margin: 0 auto 16px;
+    .pcard-img-wrap {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 10px;
       position: relative;
     }
 
-    .img-wrap::before {
+    .pcard-img-wrap::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(233,69,96,0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(233,69,96,0.1) 0%, transparent 70%);
     }
 
-    .pokemon-img {
+    .pcard-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      image-rendering: auto;
+      filter: drop-shadow(0 4px 12px rgba(233,69,96,0.25));
       transition: opacity 0.3s, transform 0.4s;
-      filter: drop-shadow(0 4px 16px rgba(233,69,96,0.3));
     }
 
-    .pokemon-img.loading { opacity: 0; transform: scale(0.85); }
+    .pcard-img.loading { opacity: 0; transform: scale(0.85); }
 
-    /* 名前 */
-    .pokemon-name {
-      font-size: 2rem;
+    .pcard-name {
+      font-size: 1.15rem;
       font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: capitalize;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
-    /* タイプバッジ */
     .types {
       display: flex;
       justify-content: center;
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
     }
 
     .type-badge {
-      padding: 4px 14px;
+      padding: 3px 10px;
       border-radius: 999px;
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: capitalize;
-      letter-spacing: 0.5px;
     }
 
-    /* ステータスバー */
+    /* HP バー */
+    .hp-section { margin-bottom: 10px; }
+
+    .hp-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .hp-bar-bg {
+      height: 8px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .hp-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #4caf50;
+      transition: width 0.5s ease, background 0.5s;
+    }
+
+    /* ステータス */
     .stats { text-align: left; }
 
     .stat-row {
       display: grid;
-      grid-template-columns: 80px 36px 1fr;
+      grid-template-columns: 60px 30px 1fr;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 5px;
     }
 
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .stat-value {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-align: right;
-    }
+    .stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+    .stat-value { font-size: 0.78rem; font-weight: 700; text-align: right; }
 
     .stat-bar-bg {
-      height: 6px;
-      background: rgba(255,255,255,0.08);
+      height: 5px;
+      background: rgba(255,255,255,0.07);
       border-radius: 3px;
       overflow: hidden;
     }
@@ -166,94 +200,185 @@
       transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
     }
 
-    /* 体重・身長 */
-    .meta {
-      display: flex;
-      justify-content: space-around;
-      margin: 16px 0 20px;
-      padding: 12px 0;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+    /* 勝者クラウン */
+    .crown {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      display: none;
+      animation: bounce 0.6s ease infinite alternate;
     }
 
-    .meta-item { text-align: center; }
-    .meta-value { font-size: 1.1rem; font-weight: 700; }
-    .meta-label { font-size: 0.7rem; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pcard.winner .crown { display: block; }
 
-    /* ボタン */
+    @keyframes bounce {
+      from { transform: translateX(-50%) translateY(0); }
+      to   { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    /* ── ボタン群 ── */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      margin-top: 24px;
-      padding: 12px 28px;
-      background: var(--accent);
-      color: #fff;
+      gap: 6px;
+      padding: 12px 26px;
       border: none;
       border-radius: 999px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
       letter-spacing: 0.5px;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: opacity 0.2s, transform 0.15s;
     }
-    .btn:hover { opacity: 0.88; transform: scale(1.03); }
-    .btn:active { transform: scale(0.98); }
-    .btn:disabled { opacity: 0.5; cursor: wait; }
 
-    /* ローディングスピナー */
+    .btn:hover:not(:disabled) { opacity: 0.85; transform: scale(1.04); }
+    .btn:active:not(:disabled) { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: wait; }
+
+    .btn-battle {
+      background: linear-gradient(135deg, #e94560, #c0392b);
+      color: #fff;
+      font-size: 1.05rem;
+      padding: 14px 36px;
+      box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+    }
+
+    .btn-reload {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* ── バトルログ ── */
+    .battle-log-wrap {
+      margin-top: 28px;
+      width: 100%;
+      max-width: 840px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .log-header {
+      background: rgba(233,69,96,0.15);
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .log-body {
+      padding: 14px 16px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .log-line {
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeIn 0.25s forwards;
+    }
+
+    .log-line.atk-a { color: #7ecfff; }
+    .log-line.atk-b { color: #ffb266; }
+    .log-line.result { font-weight: 800; font-size: 0.95rem; color: var(--gold); margin-top: 8px; }
+    .log-line.draw   { font-weight: 800; font-size: 0.95rem; color: #aaa; margin-top: 8px; }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ── スピナー ── */
     .spinner {
-      width: 40px; height: 40px;
-      border: 3px solid rgba(255,255,255,0.1);
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.08);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
-      margin: 70px auto;
+      margin: 42px auto;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* エラー */
-    .error-msg {
-      color: #ff7070;
-      font-size: 0.9rem;
-      margin-top: 16px;
-    }
-
     /* タイプカラー */
-    .type-normal   { background: #9fa19f; color: #fff; }
-    .type-fire     { background: #e62829; color: #fff; }
-    .type-water    { background: #2980ef; color: #fff; }
-    .type-grass    { background: #3fa129; color: #fff; }
-    .type-electric { background: #fac000; color: #222; }
-    .type-ice      { background: #3dcef3; color: #222; }
-    .type-fighting { background: #ff8000; color: #fff; }
-    .type-poison   { background: #9141cb; color: #fff; }
-    .type-ground   { background: #915121; color: #fff; }
-    .type-flying   { background: #81b9ef; color: #222; }
-    .type-psychic  { background: #ef4179; color: #fff; }
-    .type-bug      { background: #91a119; color: #fff; }
-    .type-rock     { background: #afa981; color: #222; }
-    .type-ghost    { background: #704170; color: #fff; }
-    .type-dragon   { background: #5060e1; color: #fff; }
-    .type-dark     { background: #49392f; color: #fff; }
-    .type-steel    { background: #60a1b8; color: #222; }
-    .type-fairy    { background: #ef70ef; color: #fff; }
+    .type-normal   { background:#9fa19f;color:#fff }
+    .type-fire     { background:#e62829;color:#fff }
+    .type-water    { background:#2980ef;color:#fff }
+    .type-grass    { background:#3fa129;color:#fff }
+    .type-electric { background:#fac000;color:#222 }
+    .type-ice      { background:#3dcef3;color:#222 }
+    .type-fighting { background:#ff8000;color:#fff }
+    .type-poison   { background:#9141cb;color:#fff }
+    .type-ground   { background:#915121;color:#fff }
+    .type-flying   { background:#81b9ef;color:#222 }
+    .type-psychic  { background:#ef4179;color:#fff }
+    .type-bug      { background:#91a119;color:#fff }
+    .type-rock     { background:#afa981;color:#222 }
+    .type-ghost    { background:#704170;color:#fff }
+    .type-dragon   { background:#5060e1;color:#fff }
+    .type-dark     { background:#49392f;color:#fff }
+    .type-steel    { background:#60a1b8;color:#222 }
+    .type-fairy    { background:#ef70ef;color:#fff }
+
+    /* レスポンシブ */
+    @media (max-width: 600px) {
+      .arena {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .vs-col {
+        flex-direction: row;
+        padding-top: 0;
+        justify-content: center;
+      }
+      .pcard-img-wrap { width: 96px; height: 96px; }
+    }
   </style>
 </head>
 <body>
-  <h1>🎲 ランダムポケモン図鑑</h1>
-  <p class="subtitle">クリックして次のポケモンを発見しよう</p>
+  <h1>⚔️ ポケモンバトル</h1>
+  <p class="subtitle">ランダムな2匹が激突！バトルボタンで勝敗を決めよう</p>
 
-  <div class="card" id="card" onclick="fetchRandom()" title="クリックで次のポケモン">
-    <span class="pokemon-id" id="pokemonId"></span>
-    <div id="content">
-      <div class="spinner"></div>
+  <div class="arena">
+    <div class="pcard" id="cardA">
+      <span class="crown">👑</span>
+      <span class="pcard-id" id="idA"></span>
+      <div id="bodyA"><div class="spinner"></div></div>
+    </div>
+
+    <div class="vs-col">
+      <div class="vs-badge">VS</div>
+    </div>
+
+    <div class="pcard" id="cardB">
+      <span class="crown">👑</span>
+      <span class="pcard-id" id="idB"></span>
+      <div id="bodyB"><div class="spinner"></div></div>
     </div>
   </div>
 
-  <button class="btn" id="btn" onclick="fetchRandom()">
-    <span>✨</span> つぎのポケモン
-  </button>
+  <div class="btn-row">
+    <button class="btn btn-battle" id="btnBattle" onclick="startBattle()" disabled>⚔️ バトル！</button>
+    <button class="btn btn-reload" id="btnReload" onclick="loadPair()" disabled>🎲 別のポケモン</button>
+  </div>
+
+  <div class="battle-log-wrap" id="logWrap" style="display:none">
+    <div class="log-header">⚡ バトルログ</div>
+    <div class="log-body" id="logBody"></div>
+  </div>
 
   <script>
     const TOTAL = 898;
@@ -266,7 +391,6 @@
       'special-defense':'#a7db8d',
       speed:            '#fa92b2',
     };
-
     const STAT_LABELS = {
       hp:               'HP',
       attack:           'こうげき',
@@ -276,111 +400,251 @@
       speed:            'すばやさ',
     };
 
-    const jaNameCache = {};
+    const jaCache = {};
 
     async function fetchJaName(id) {
-      if (jaNameCache[id]) return jaNameCache[id];
+      if (jaCache[id]) return jaCache[id];
       try {
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`);
         if (!res.ok) return null;
-        const data = await res.json();
-        const entry = data.names.find(n => n.language.name === 'ja-Hrkt') ||
-                      data.names.find(n => n.language.name === 'ja');
-        const name = entry ? entry.name : null;
-        jaNameCache[id] = name;
-        return name;
+        const d = await res.json();
+        const e = d.names.find(n => n.language.name === 'ja-Hrkt') || d.names.find(n => n.language.name === 'ja');
+        jaCache[id] = e ? e.name : null;
+        return jaCache[id];
       } catch { return null; }
     }
 
-    async function fetchRandom() {
-      const btn = document.getElementById('btn');
-      const card = document.getElementById('card');
-      const idEl = document.getElementById('pokemonId');
-      const content = document.getElementById('content');
+    async function fetchPokemon(id) {
+      const [res, jaName] = await Promise.all([
+        fetch(`https://pokeapi.co/api/v2/pokemon/${id}`),
+        fetchJaName(id),
+      ]);
+      if (!res.ok) throw new Error();
+      const p = await res.json();
+      return {
+        id:    p.id,
+        name:  jaName || p.name,
+        img:   p.sprites?.other?.['official-artwork']?.front_default || p.sprites?.front_default || '',
+        types: p.types.map(t => t.type.name),
+        stats: Object.fromEntries(p.stats.map(s => [s.stat.name, s.base_stat])),
+      };
+    }
 
-      btn.disabled = true;
-      card.style.pointerEvents = 'none';
-      idEl.textContent = '';
-      content.innerHTML = '<div class="spinner"></div>';
+    let pokeA = null, pokeB = null;
 
-      const id = Math.floor(Math.random() * TOTAL) + 1;
+    function renderCard(bodyId, idEl, poke) {
+      const s = poke.stats;
+      idEl.textContent = `No.${String(poke.id).padStart(3,'0')}`;
+      document.getElementById(bodyId).innerHTML = `
+        <div class="pcard-img-wrap">
+          <img class="pcard-img loading" id="img-${bodyId}" src="${poke.img}" alt="${poke.name}">
+        </div>
+        <div class="pcard-name">${poke.name}</div>
+        <div class="types">${poke.types.map(t => `<span class="type-badge type-${t}">${t}</span>`).join('')}</div>
+        <div class="hp-section">
+          <div class="hp-header"><span>HP</span><span id="hpVal-${bodyId}">${s.hp}</span></div>
+          <div class="hp-bar-bg"><div class="hp-bar-fill" id="hpBar-${bodyId}" style="width:${s.hp/255*100}%"></div></div>
+        </div>
+        <div class="stats">
+          ${['attack','defense','special-attack','special-defense','speed'].map(key => `
+            <div class="stat-row">
+              <span class="stat-label">${STAT_LABELS[key]}</span>
+              <span class="stat-value">${s[key]}</span>
+              <div class="stat-bar-bg">
+                <div class="stat-bar-fill" style="width:0%;background:${STAT_COLORS[key]}" data-val="${s[key]}"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+      `;
+      const img = document.getElementById(`img-${bodyId}`);
+      img.onload = () => img.classList.remove('loading');
+      if (img.complete) img.classList.remove('loading');
+
+      requestAnimationFrame(() => {
+        document.querySelectorAll(`#${bodyId} .stat-bar-fill`).forEach(bar => {
+          bar.style.width = Math.min(parseInt(bar.dataset.val) / 255 * 100, 100) + '%';
+        });
+      });
+    }
+
+    async function loadPair() {
+      pokeA = null; pokeB = null;
+
+      const btnBattle = document.getElementById('btnBattle');
+      const btnReload = document.getElementById('btnReload');
+      btnBattle.disabled = true;
+      btnReload.disabled = true;
+
+      document.getElementById('logWrap').style.display = 'none';
+      document.getElementById('logBody').innerHTML = '';
+
+      const cardA = document.getElementById('cardA');
+      const cardB = document.getElementById('cardB');
+      cardA.className = 'pcard';
+      cardB.className = 'pcard';
+      document.getElementById('bodyA').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('bodyB').innerHTML = '<div class="spinner"></div>';
+      document.getElementById('idA').textContent = '';
+      document.getElementById('idB').textContent = '';
+
+      let idA, idB;
+      do {
+        idA = Math.floor(Math.random() * TOTAL) + 1;
+        idB = Math.floor(Math.random() * TOTAL) + 1;
+      } while (idA === idB);
 
       try {
-        const [res, jaName] = await Promise.all([
-          fetch(`https://pokeapi.co/api/v2/pokemon/${id}`),
-          fetchJaName(id),
-        ]);
-
-        if (!res.ok) throw new Error('fetch failed');
-        const p = await res.json();
-
-        const imgUrl = p.sprites?.other?.['official-artwork']?.front_default
-                    || p.sprites?.front_default
-                    || '';
-
-        const types = p.types.map(t => t.type.name);
-
-        const stats = p.stats.map(s => ({
-          name:  s.stat.name,
-          value: s.base_stat,
-        }));
-
-        const displayName = jaName || p.name;
-
-        idEl.textContent = `No.${String(p.id).padStart(3, '0')}`;
-
-        content.innerHTML = `
-          <div class="img-wrap">
-            <img class="pokemon-img loading" id="pImg" src="${imgUrl}" alt="${displayName}" />
-          </div>
-          <div class="pokemon-name">${displayName}</div>
-          <div class="types">
-            ${types.map(t => `<span class="type-badge type-${t}">${t}</span>`).join('')}
-          </div>
-          <div class="meta">
-            <div class="meta-item">
-              <div class="meta-value">${(p.height / 10).toFixed(1)} m</div>
-              <div class="meta-label">たかさ</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-value">${(p.weight / 10).toFixed(1)} kg</div>
-              <div class="meta-label">おもさ</div>
-            </div>
-          </div>
-          <div class="stats">
-            ${stats.map(s => `
-              <div class="stat-row">
-                <span class="stat-label">${STAT_LABELS[s.name] || s.name}</span>
-                <span class="stat-value">${s.value}</span>
-                <div class="stat-bar-bg">
-                  <div class="stat-bar-fill" style="width:0%;background:${STAT_COLORS[s.name] || '#e94560'}" data-val="${s.value}"></div>
-                </div>
-              </div>`).join('')}
-          </div>
-        `;
-
-        // 画像フェードイン
-        const img = document.getElementById('pImg');
-        img.onload = () => img.classList.remove('loading');
-        if (img.complete) img.classList.remove('loading');
-
-        // ステータスバーアニメーション
-        requestAnimationFrame(() => {
-          document.querySelectorAll('.stat-bar-fill').forEach(bar => {
-            const val = parseInt(bar.dataset.val, 10);
-            bar.style.width = Math.min(val / 255 * 100, 100) + '%';
-          });
-        });
-
-      } catch (e) {
-        content.innerHTML = `<p class="error-msg">読み込みに失敗しました。<br>もう一度お試しください。</p>`;
-      } finally {
-        btn.disabled = false;
-        card.style.pointerEvents = '';
+        [pokeA, pokeB] = await Promise.all([fetchPokemon(idA), fetchPokemon(idB)]);
+        renderCard('bodyA', document.getElementById('idA'), pokeA);
+        renderCard('bodyB', document.getElementById('idB'), pokeB);
+        btnBattle.disabled = false;
+        btnReload.disabled = false;
+      } catch {
+        document.getElementById('bodyA').innerHTML = '<p style="color:#f77;padding:20px;font-size:.85rem">読み込みエラー</p>';
+        document.getElementById('bodyB').innerHTML = '<p style="color:#f77;padding:20px;font-size:.85rem">読み込みエラー</p>';
+        btnReload.disabled = false;
       }
     }
 
-    fetchRandom();
+    /* ── バトルシミュレーション ── */
+    function calcDamage(atk, def) {
+      const base = Math.max(1, Math.floor(atk / def * 40 + 2));
+      const roll = 0.85 + Math.random() * 0.15;
+      return Math.max(1, Math.round(base * roll));
+    }
+
+    function addLog(text, cls, delay) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          const log = document.getElementById('logBody');
+          const line = document.createElement('div');
+          line.className = `log-line ${cls}`;
+          line.textContent = text;
+          line.style.animationDelay = '0s';
+          log.appendChild(line);
+          log.scrollTop = log.scrollHeight;
+          resolve();
+        }, delay);
+      });
+    }
+
+    function updateHpBar(bodyId, current, max) {
+      const pct = Math.max(0, current / max * 100);
+      const bar = document.getElementById(`hpBar-${bodyId}`);
+      const val = document.getElementById(`hpVal-${bodyId}`);
+      if (bar) {
+        bar.style.width = pct + '%';
+        bar.style.background = pct > 50 ? '#4caf50' : pct > 20 ? '#f5ac78' : '#e94560';
+      }
+      if (val) val.textContent = Math.max(0, current);
+    }
+
+    async function startBattle() {
+      const btnBattle = document.getElementById('btnBattle');
+      const btnReload = document.getElementById('btnReload');
+      btnBattle.disabled = true;
+      btnReload.disabled = true;
+
+      const cardA = document.getElementById('cardA');
+      const cardB = document.getElementById('cardB');
+      cardA.className = 'pcard';
+      cardB.className = 'pcard';
+
+      const logWrap = document.getElementById('logWrap');
+      const logBody = document.getElementById('logBody');
+      logBody.innerHTML = '';
+      logWrap.style.display = 'block';
+
+      /* 能力値取得 */
+      const sA = pokeA.stats, sB = pokeB.stats;
+      let hpA = sA.hp, hpB = sB.hp;
+      const maxHpA = hpA, maxHpB = hpB;
+
+      /* 素早さで先攻を決める */
+      let firstIsA = sA.speed >= sB.speed;
+      let delay = 0;
+
+      await addLog(`⚡ バトルスタート！ ${pokeA.name} VS ${pokeB.name}`, '', delay);
+      delay += 400;
+      await addLog(`先攻: ${firstIsA ? pokeA.name : pokeB.name}（すばやさ ${firstIsA ? sA.speed : sB.speed}）`, '', delay);
+      delay += 300;
+
+      let turn = 0;
+      const MAX_TURNS = 30;
+
+      while (hpA > 0 && hpB > 0 && turn < MAX_TURNS) {
+        turn++;
+        delay += 50;
+
+        if (firstIsA) {
+          /* A が攻撃 */
+          const atk = Math.max(sA.attack, sA['special-attack']);
+          const def = Math.max(sB.defense, sB['special-defense']);
+          const dmg = calcDamage(atk, def);
+          hpB = Math.max(0, hpB - dmg);
+          await addLog(`ターン${turn}: ${pokeA.name} の攻撃 → ${pokeB.name} に ${dmg} ダメージ（残HP: ${hpB}）`, 'atk-a', delay);
+          delay += 400;
+          updateHpBar('bodyB', hpB, maxHpB);
+          if (hpB <= 0) break;
+
+          /* B が反撃 */
+          const atkB = Math.max(sB.attack, sB['special-attack']);
+          const defA = Math.max(sA.defense, sA['special-defense']);
+          const dmgB = calcDamage(atkB, defA);
+          hpA = Math.max(0, hpA - dmgB);
+          await addLog(`       ${pokeB.name} の反撃 → ${pokeA.name} に ${dmgB} ダメージ（残HP: ${hpA}）`, 'atk-b', delay);
+          delay += 400;
+          updateHpBar('bodyA', hpA, maxHpA);
+        } else {
+          /* B が攻撃 */
+          const atkB = Math.max(sB.attack, sB['special-attack']);
+          const defA = Math.max(sA.defense, sA['special-defense']);
+          const dmgB = calcDamage(atkB, defA);
+          hpA = Math.max(0, hpA - dmgB);
+          await addLog(`ターン${turn}: ${pokeB.name} の攻撃 → ${pokeA.name} に ${dmgB} ダメージ（残HP: ${hpA}）`, 'atk-b', delay);
+          delay += 400;
+          updateHpBar('bodyA', hpA, maxHpA);
+          if (hpA <= 0) break;
+
+          /* A が反撃 */
+          const atkA = Math.max(sA.attack, sA['special-attack']);
+          const defB = Math.max(sB.defense, sB['special-defense']);
+          const dmgA = calcDamage(atkA, defB);
+          hpB = Math.max(0, hpB - dmgA);
+          await addLog(`       ${pokeA.name} の反撃 → ${pokeB.name} に ${dmgA} ダメージ（残HP: ${hpB}）`, 'atk-a', delay);
+          delay += 400;
+          updateHpBar('bodyB', hpB, maxHpB);
+        }
+      }
+
+      /* 結果 */
+      delay += 200;
+      setTimeout(() => {
+        const logBody = document.getElementById('logBody');
+        const line = document.createElement('div');
+
+        if (hpA > 0 && hpB <= 0) {
+          line.className = 'log-line result';
+          line.textContent = `🏆 ${pokeA.name} の勝利！（残HP: ${hpA}）`;
+          cardA.className = 'pcard winner';
+          cardB.className = 'pcard loser';
+        } else if (hpB > 0 && hpA <= 0) {
+          line.className = 'log-line result';
+          line.textContent = `🏆 ${pokeB.name} の勝利！（残HP: ${hpB}）`;
+          cardB.className = 'pcard winner';
+          cardA.className = 'pcard loser';
+        } else {
+          line.className = 'log-line draw';
+          line.textContent = `🤝 引き分け！（${MAX_TURNS}ターン経過）`;
+        }
+
+        logBody.appendChild(line);
+        logBody.scrollTop = logBody.scrollHeight;
+        btnReload.disabled = false;
+      }, delay);
+    }
+
+    loadPair();
   </script>
 </body>
 </html>
