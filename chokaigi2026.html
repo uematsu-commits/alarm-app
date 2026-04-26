@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ニコニコ超会議2026 完全ガイド</title>
+  <style>
+    :root {
+      --nico-black: #1a1a1a;
+      --nico-white: #ffffff;
+      --nico-orange: #ff6600;
+      --nico-orange-light: #ff8833;
+      --nico-gray: #f5f5f5;
+      --nico-gray-dark: #888;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+      background: var(--nico-gray);
+      color: var(--nico-black);
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, var(--nico-black) 0%, #333 100%);
+      color: white;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      background: var(--nico-orange);
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1.3;
+    }
+
+    .logo-text span {
+      color: var(--nico-orange);
+      font-size: 18px;
+      display: block;
+    }
+
+    nav {
+      display: flex;
+      gap: 4px;
+    }
+
+    nav a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      background: var(--nico-orange);
+      color: white;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, #111 0%, #2a2a2a 50%, #1a1a1a 100%);
+      color: white;
+      padding: 48px 20px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,102,0,0.3) 0%, transparent 70%);
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--nico-orange);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .hero h1 .accent { color: var(--nico-orange); }
+
+    .hero-date {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #ddd;
+    }
+
+    .hero-venue {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 24px;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--nico-orange);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* ===== MAIN ===== */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    section {
+      margin-bottom: 36px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 24px;
+      background: var(--nico-orange);
+      border-radius: 2px;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    /* ===== INFO GRID ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .info-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--nico-gray-dark);
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    .info-sub {
+      font-size: 12px;
+      color: var(--nico-gray-dark);
+      margin-top: 3px;
+    }
+
+    /* ===== TICKET TABLE ===== */
+    .ticket-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .ticket-table th {
+      background: var(--nico-black);
+      color: white;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .ticket-table th:first-child { border-radius: 8px 0 0 0; }
+    .ticket-table th:last-child { border-radius: 0 8px 0 0; }
+
+    .ticket-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .ticket-table tr:last-child td { border-bottom: none; }
+
+    .ticket-table tr:nth-child(even) td { background: #fafafa; }
+
+    .ticket-highlight {
+      color: var(--nico-orange);
+      font-weight: bold;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-left: 4px;
+    }
+
+    .badge-orange { background: #fff0e6; color: var(--nico-orange); }
+    .badge-free { background: #e8f5e9; color: #2e7d32; }
+
+    /* ===== EVENTS / FILTER ===== */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .filter-btn {
+      padding: 7px 14px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--nico-gray-dark);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--nico-orange);
+      color: var(--nico-orange);
+    }
+
+    .filter-btn.active {
+      background: var(--nico-orange);
+      border-color: var(--nico-orange);
+      color: white;
+    }
+
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--card-shadow);
+      border-left: 4px solid var(--nico-orange);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .event-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+    }
+
+    .event-card.hidden { display: none; }
+
+    .event-cat {
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      color: var(--nico-gray-dark);
+      margin-bottom: 6px;
+    }
+
+    .event-name {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .event-desc {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .event-day {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 8px;
+    }
+
+    .day1 { background: #e3f2fd; color: #1565c0; }
+    .day2 { background: #fce4ec; color: #c62828; }
+    .both { background: #f3e5f5; color: #6a1b9a; }
+
+    /* ===== TIMETABLE ===== */
+    .timetable-day {
+      margin-bottom: 20px;
+    }
+
+    .timetable-day-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0;
+    }
+
+    .day1-label { background: #1565c0; }
+    .day2-label { background: #c62828; }
+
+    .timetable-list {
+      background: white;
+      border-radius: 0 0 8px 8px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .timetable-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      border-bottom: 1px solid #eee;
+    }
+
+    .timetable-item:last-child { border-bottom: none; }
+
+    .tt-time {
+      background: #fafafa;
+      padding: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--nico-gray-dark);
+      border-right: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .tt-body {
+      padding: 12px 14px;
+    }
+
+    .tt-name {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .tt-detail {
+      font-size: 12px;
+      color: #666;
+    }
+
+    /* ===== ACCESS ===== */
+    .access-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .access-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: white;
+      border-radius: 10px;
+      padding: 14px 16px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .access-num {
+      background: var(--nico-orange);
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .access-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .access-text span {
+      font-size: 13px;
+      color: #555;
+    }
+
+    /* ===== TIPS ===== */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .tip-card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .tip-icon { font-size: 24px; margin-bottom: 8px; }
+
+    .tip-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: var(--nico-black);
+    }
+
+    .tip-text {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* ===== LINK BUTTON ===== */
+    .link-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 2px solid var(--nico-orange);
+      color: var(--nico-orange);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .link-btn:hover {
+      background: var(--nico-orange);
+      color: white;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--nico-black);
+      color: #888;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+    }
+
+    footer a { color: var(--nico-orange); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      nav { display: none; }
+      .hero h1 { font-size: 24px; }
+      .hero-stats { gap: 20px; }
+      .hero-stat-num { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">超</div>
+      <div class="logo-text">
+        <span>ニコニコ超会議2026</span>
+        完全ガイド
+      </div>
+    </div>
+    <nav>
+      <a href="#info" onclick="scrollTo('#info')">基本情報</a>
+      <a href="#ticket" onclick="scrollTo('#ticket')">チケット</a>
+      <a href="#events" onclick="scrollTo('#events')">企画一覧</a>
+      <a href="#timetable" onclick="scrollTo('#timetable')">タイムテーブル</a>
+      <a href="#access" onclick="scrollTo('#access')">アクセス</a>
+      <a href="#tips" onclick="scrollTo('#tips')">Tips</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">2026 OFFICIAL GUIDE</div>
+    <h1>ニコニコ<span class="accent">超会議</span><br>2026</h1>
+    <div class="hero-date">4月25日(土) · 26日(日)</div>
+    <div class="hero-venue">幕張メッセ 国際展示場 / 国際会議場 / 幕張イベントホール</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">13万+</div>
+        <div class="hero-stat-label">来場者数（昨年）</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">774</div>
+        <div class="hero-stat-label">クリエイター出展数</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">2日間</div>
+        <div class="hero-stat-label">開催期間</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ===== 基本情報 ===== -->
+  <section id="info">
+    <div class="section-title">基本情報</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">📅</div>
+        <div>
+          <div class="info-label">開催日程</div>
+          <div class="info-value">2026年4月25日(土)・26日(日)</div>
+          <div class="info-sub">土曜 10:00〜18:00（最終入場17:30）<br>日曜 10:00〜17:00（最終入場16:30）</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-label">会場</div>
+          <div class="info-value">幕張メッセ（全館使用）</div>
+          <div class="info-sub">国際展示場 / 国際会議場<br>幕張イベントホール</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🎪</div>
+        <div>
+          <div class="info-label">規模</div>
+          <div class="info-value">2年ぶり幕張全館使用</div>
+          <div class="info-sub">クリエイタークロス774グループ出展<br>昨年比112グループ増</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🌐</div>
+        <div>
+          <div class="info-label">公式サイト</div>
+          <div class="info-value"><a href="https://chokaigi.jp/2026/" target="_blank" style="color:var(--nico-orange)">chokaigi.jp</a></div>
+          <div class="info-sub">タイムテーブル・マップも掲載</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== チケット ===== -->
+  <section id="ticket">
+    <div class="section-title">チケット情報</div>
+    <div class="card">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>種別</th>
+            <th>2日通し</th>
+            <th>1日券（前売）</th>
+            <th>1日券（当日）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>優先入場券</strong><span class="badge badge-orange">数量限定・前売のみ</span></td>
+            <td class="ticket-highlight">¥11,500</td>
+            <td class="ticket-highlight">¥6,000</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>一般入場券</strong></td>
+            <td class="ticket-highlight">¥7,200<span class="badge badge-orange">前売のみ</span></td>
+            <td class="ticket-highlight">¥3,800</td>
+            <td class="ticket-highlight">¥4,500</td>
+          </tr>
+          <tr>
+            <td><strong>中学生以下</strong></td>
+            <td class="ticket-highlight"><span class="badge badge-free">無料</span></td>
+            <td class="ticket-highlight"><span class="badge badge-free">無料</span></td>
+            <td class="ticket-highlight"><span class="badge badge-free">無料</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px; font-size:12px; color:#666;">
+        ※ チケットは <a href="https://eplus.jp/sf/detail/0717790030" target="_blank" style="color:var(--nico-orange)">イープラス</a>・<a href="https://l-tike.com/event/mevent/?mid=683511" target="_blank" style="color:var(--nico-orange)">ローチケ</a> などで購入可能
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 企画一覧 ===== -->
+  <section id="events">
+    <div class="section-title">企画一覧</div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterEvents('all', this)">すべて</button>
+      <button class="filter-btn" onclick="filterEvents('live', this)">ライブ・ステージ</button>
+      <button class="filter-btn" onclick="filterEvents('vocaloid', this)">ボカロ</button>
+      <button class="filter-btn" onclick="filterEvents('vtuber', this)">VTuber</button>
+      <button class="filter-btn" onclick="filterEvents('game', this)">ゲーム</button>
+      <button class="filter-btn" onclick="filterEvents('dance', this)">踊ってみた</button>
+      <button class="filter-btn" onclick="filterEvents('other', this)">その他</button>
+    </div>
+
+    <div class="event-grid" id="eventGrid">
+
+      <div class="event-card" data-cat="vocaloid">
+        <div class="event-cat">VOCALOID</div>
+        <div class="event-name">超ボカニコ2026</div>
+        <div class="event-desc">ボカロ楽曲オンリーDJステージ。TeddyLoid × ギガちゃん（ママ）のDJに鈴木このみがゲストボーカルで参加。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="dance">
+        <div class="event-cat">踊ってみた・歌ってみた</div>
+        <div class="event-name">Collection THE LIVE<br>〜踊ってみた×歌ってみた〜</div>
+        <div class="event-desc">踊り手と歌い手がコラボするライブステージ。出演者39名が集結する超豪華ステージ。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="dance">
+        <div class="event-cat">踊ってみた</div>
+        <div class="event-name">歌踊超対バン（新企画）</div>
+        <div class="event-desc">歌い手と踊り手が対バン形式で競演する2026年の新企画。注目の新コンテンツ。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="vtuber">
+        <div class="event-cat">VTuber</div>
+        <div class="event-name">超VTuberのASMR足湯</div>
+        <div class="event-desc">VTuberに癒やされる体験型新ブース。ASMRを聴きながら足湯を楽しめる没入体験。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="other">
+        <div class="event-cat">体験展示</div>
+        <div class="event-name">超・思考実験展</div>
+        <div class="event-desc">声優・ストリーマー・VTuberが集結する6公演。杉田智和、k4sen、ズズ等が出演。全公演ニコ生独占配信。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="live">
+        <div class="event-cat">ライブ・ステージ</div>
+        <div class="event-name">超ニコ生ライブ（Day2）</div>
+        <div class="event-desc">スペシャルゲスト：宮田俊哉（Kis-My-Ft2）、AKINO with bless4、高橋洋子が出演。</div>
+        <div class="event-day day2">Day2 4/26</div>
+      </div>
+
+      <div class="event-card" data-cat="other">
+        <div class="event-cat">トーク・バラエティ</div>
+        <div class="event-name">超寝配信</div>
+        <div class="event-desc">ニコニコ伝統の寝配信企画。会場内で有名配信者が実際に配信しながら眠る？謎の体験型コンテンツ。</div>
+        <div class="event-day day1">Day1 4/25</div>
+      </div>
+
+      <div class="event-card" data-cat="other">
+        <div class="event-cat">ニコ生</div>
+        <div class="event-name">超演劇〜ニコ生の女神が消えた空白の1年〜</div>
+        <div class="event-desc">ニコ生を舞台にしたオリジナル演劇。ニコニコの歴史を辿るドラマチックな舞台作品。</div>
+        <div class="event-day day2">Day2 4/26</div>
+      </div>
+
+      <div class="event-card" data-cat="game">
+        <div class="event-cat">ゲーム</div>
+        <div class="event-name">超ゲームエリア</div>
+        <div class="event-desc">最新ゲームの試遊・対戦ステージ。加藤純一、もこう、ひろゆきらゲストが参加するゲーム企画も。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="other">
+        <div class="event-cat">料理</div>
+        <div class="event-name">超ニコ生料理王決定戦</div>
+        <div class="event-desc">ニコ生発の料理対決コンテンツ。実際に調理しながら勝負する本格的料理バトル。</div>
+        <div class="event-day day2">Day2 4/26</div>
+      </div>
+
+      <div class="event-card" data-cat="other">
+        <div class="event-cat">自衛隊</div>
+        <div class="event-name">超自衛隊（3年ぶり復活）</div>
+        <div class="event-desc">大人気の自衛隊展示が3年ぶりに復活！装備品展示や体験コーナーも予定。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="live">
+        <div class="event-cat">ライブ</div>
+        <div class="event-name">超アフラン学園文化祭</div>
+        <div class="event-desc">アフィリア・サーガ系ライブ企画。懐かしのキャラクターたちによるステージパフォーマンス。</div>
+        <div class="event-day day1">Day1 4/25</div>
+      </div>
+
+      <div class="event-card" data-cat="other">
+        <div class="event-cat">クリエイタークロス</div>
+        <div class="event-name">クリエイタークロス774グループ</div>
+        <div class="event-desc">ボカロP・歌い手・踊り手・絵師・VTuberが自分のブースを出店。グッズ販売・展示・交流が楽しめる超会議の核心エリア。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+      <div class="event-card" data-cat="vocaloid">
+        <div class="event-cat">VOCALOID / 初音ミク</div>
+        <div class="event-name">初音ミク関連ブース</div>
+        <div class="event-desc">初音ミク公式ブログでも情報公開済みの特別ブース。ミク関連グッズ・体験コンテンツが集結。</div>
+        <div class="event-day both">両日</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== タイムテーブル ===== -->
+  <section id="timetable">
+    <div class="section-title">タイムテーブル（主要ステージ抜粋）</div>
+
+    <div class="timetable-day">
+      <div class="timetable-day-label day1-label">Day 1 — 4月25日（土） 10:00〜18:00</div>
+      <div class="timetable-list">
+        <div class="timetable-item">
+          <div class="tt-time">10:00<br>開場</div>
+          <div class="tt-body">
+            <div class="tt-name">各エリア・クリエイタークロス一斉オープン</div>
+            <div class="tt-detail">クリエイタークロス（774グループ）、ゲームエリア、各種体験ブース</div>
+          </div>
+        </div>
+        <div class="timetable-item">
+          <div class="tt-time">午前〜<br>昼</div>
+          <div class="tt-body">
+            <div class="tt-name">超ボカニコ2026 / ゲームステージ</div>
+            <div class="tt-detail">TeddyLoid × ギガちゃん（ママ） DJ、鈴木このみゲストボーカル</div>
+          </div>
+        </div>
+        <div class="timetable-item">
+          <div class="tt-time">昼〜<br>夕方</div>
+          <div class="tt-body">
+            <div class="tt-name">超アフラン学園文化祭 / 超寝配信 / 超VAMKISS</div>
+            <div class="tt-detail">各ステージ・エリアで並行開催 ※詳細は公式タイムテーブル参照</div>
+          </div>
+        </div>
+        <div class="timetable-item">
+          <div class="tt-time">17:30<br>最終入場</div>
+          <div class="tt-body">
+            <div class="tt-name">最終入場時刻・各ステージフィナーレ</div>
+            <div class="tt-detail">18:00 完全閉場</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timetable-day">
+      <div class="timetable-day-label day2-label">Day 2 — 4月26日（日） 10:00〜17:00</div>
+      <div class="timetable-list">
+        <div class="timetable-item">
+          <div class="tt-time">10:00<br>開場</div>
+          <div class="tt-body">
+            <div class="tt-name">全エリア一斉オープン</div>
+            <div class="tt-detail">クリエイタークロス、体験ブース、展示エリアすべて開場</div>
+          </div>
+        </div>
+        <div class="timetable-item">
+          <div class="tt-time">午前〜<br>昼</div>
+          <div class="tt-body">
+            <div class="tt-name">超演劇 / 超めろめいど萌え萌え対決 / 超ニコ生料理王決定戦</div>
+            <div class="tt-detail">複数ステージで並行開催</div>
+          </div>
+        </div>
+        <div class="timetable-item">
+          <div class="tt-time">昼〜<br>夕方</div>
+          <div class="tt-body">
+            <div class="tt-name">超ニコ生ライブ スペシャルゲスト</div>
+            <div class="tt-detail">宮田俊哉（Kis-My-Ft2）/ AKINO with bless4 / 高橋洋子 出演</div>
+          </div>
+        </div>
+        <div class="timetable-item">
+          <div class="tt-time">16:30<br>最終入場</div>
+          <div class="tt-body">
+            <div class="tt-name">最終入場時刻・フィナーレ</div>
+            <div class="tt-detail">17:00 完全閉場</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; padding:12px 16px; background:white; border-radius:8px; font-size:13px; color:#666; box-shadow:var(--card-shadow);">
+      ⚠️ 詳細なタイムテーブルは <a href="https://chokaigi.jp/2026/timetable/" target="_blank" style="color:var(--nico-orange); font-weight:bold;">公式タイムテーブルページ</a> でご確認ください。ステージによって整理券が必要な場合があります。
+    </div>
+  </section>
+
+  <!-- ===== アクセス ===== -->
+  <section id="access">
+    <div class="section-title">アクセス</div>
+    <div class="access-steps">
+      <div class="access-step">
+        <div class="access-num">1</div>
+        <div class="access-text">
+          <strong>JR京葉線「海浜幕張駅」下車</strong>
+          <span>東京駅から約30分。快速利用で乗り換えなし。開催日は臨時列車が運行予定。</span>
+        </div>
+      </div>
+      <div class="access-step">
+        <div class="access-num">2</div>
+        <div class="access-text">
+          <strong>北口から幕張メッセまで徒歩約5分</strong>
+          <span>駅を出たら案内板に従って直進。大勢の参加者がいるので迷わない。</span>
+        </div>
+      </div>
+      <div class="access-step">
+        <div class="access-num">3</div>
+        <div class="access-text">
+          <strong>入場ゲートでチケット提示</strong>
+          <span>電子チケット（スマホ画面）でも入場可能。優先入場券なら開場と同時に最前線へ。</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="link-list">
+        <a class="link-btn" href="https://www.m-messe.co.jp/event/detail/8627" target="_blank">🗺 幕張メッセ公式アクセス</a>
+        <a class="link-btn" href="https://chokaigi.jp/2026/map/" target="_blank">🏟 会場マップ</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Tips ===== -->
+  <section id="tips">
+    <div class="section-title">初参加・楽しみ方 Tips</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">⏰</div>
+        <div class="tip-title">開場ダッシュが鍵</div>
+        <div class="tip-text">人気ステージや整理券配布は開場直後に埋まる。目当ての企画がある場合は早めの到着を。優先入場券があれば有利。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">👟</div>
+        <div class="tip-title">歩きやすい靴必須</div>
+        <div class="tip-text">幕張メッセは全館で超広い。1日で数万歩歩くことも。スニーカー等の歩きやすい靴で来場しよう。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💴</div>
+        <div class="tip-title">現金とキャッシュレス両方</div>
+        <div class="tip-text">クリエイタークロスのブースは現金のみの場合あり。ATMは混雑するので事前に準備しておくと安心。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🎒</div>
+        <div class="tip-title">大きめのエコバッグを</div>
+        <div class="tip-text">クリエイタークロスでグッズを大量購入する人が多い。折りたたみエコバッグを数枚持参すると便利。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📱</div>
+        <div class="tip-title">モバイルバッテリー必携</div>
+        <div class="tip-text">会場内はWi-Fiが混雑しがち。モバイルバッテリーを持ち、地図やタイムテーブルをオフラインで確認できるようにしておこう。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🍱</div>
+        <div class="tip-title">昼食は11時台に</div>
+        <div class="tip-text">会場フードコートは昼のピーク時に長蛇の列。11時台の早めランチか、近くのイオンモール幕張への離脱がおすすめ。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🤳</div>
+        <div class="tip-title">クリエイターとの交流を楽しもう</div>
+        <div class="tip-text">クリエイタークロスのブースでは推しのクリエイターと直接話せる貴重な機会。差し入れや手紙を用意してくる人も多い。</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🎫</div>
+        <div class="tip-title">整理券システムに注意</div>
+        <div class="tip-text">人気ステージは整理券制。配布場所・時間を公式サイトで事前確認し、優先順位を決めておこう。全部は回れないので計画的に。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 公式リンク ===== -->
+  <section>
+    <div class="section-title">公式リンク</div>
+    <div class="link-list">
+      <a class="link-btn" href="https://chokaigi.jp/2026/" target="_blank">🏠 公式サイト</a>
+      <a class="link-btn" href="https://chokaigi.jp/2026/plan/" target="_blank">📋 企画一覧</a>
+      <a class="link-btn" href="https://chokaigi.jp/2026/timetable/" target="_blank">🕐 タイムテーブル</a>
+      <a class="link-btn" href="https://chokaigi.jp/2026/artist/" target="_blank">🎤 出演者一覧</a>
+      <a class="link-btn" href="https://chokaigi.jp/2026/ticket/" target="_blank">🎟 チケット購入</a>
+      <a class="link-btn" href="https://chokaigi.jp/2026/map/" target="_blank">🗺 会場マップ</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>ニコニコ超会議2026 完全ガイド — 非公式ファンガイド</p>
+  <p style="margin-top:6px;">最新・正確な情報は <a href="https://chokaigi.jp/2026/" target="_blank">公式サイト</a> でご確認ください</p>
+</footer>
+
+<script>
+  function filterEvents(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.event-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // nav active state on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>
