@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルアラームアプリ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .time-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            min-height: 60px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-set {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-set:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-stop {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        .btn-stop:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .status.active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status.inactive {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .alarm-ringing {
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ アラームアプリ</h1>
+
+        <div class="input-group">
+            <label for="alarmTime">アラーム時刻を設定</label>
+            <input type="time" id="alarmTime" value="07:00">
+        </div>
+
+        <div class="time-display" id="timeDisplay">07:00</div>
+
+        <div class="button-group">
+            <button class="btn-set" onclick="setAlarm()">セット</button>
+            <button class="btn-stop" id="stopBtn" disabled onclick="stopAlarm()">停止</button>
+        </div>
+
+        <div class="status" id="status">アラームの準備完了</div>
+    </div>
+
+    <script>
+        let alarmTime = null;
+        let isAlarmActive = false;
+        let checkInterval = null;
+        let alarmAudio = null;
+
+        // ページ読み込み時に時刻表示を更新
+        function updateCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('timeDisplay').textContent = `${hours}:${minutes}`;
+        }
+
+        // 毎秒、現在時刻を更新してアラームをチェック
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime();
+
+        function setAlarm() {
+            const input = document.getElementById('alarmTime').value;
+
+            if (!input) {
+                alert('時刻を選択してください');
+                return;
+            }
+
+            alarmTime = input;
+            isAlarmActive = true;
+            document.getElementById('stopBtn').disabled = false;
+
+            const status = document.getElementById('status');
+            status.textContent = `✅ アラームをセット：${alarmTime}`;
+            status.className = 'status active';
+
+            // アラームをチェック開始
+            if (checkInterval) clearInterval(checkInterval);
+            checkInterval = setInterval(checkAlarm, 1000);
+        }
+
+        function checkAlarm() {
+            if (!isAlarmActive) return;
+
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTime = `${hours}:${minutes}`;
+
+            if (currentTime === alarmTime) {
+                ringAlarm();
+                isAlarmActive = false;
+            }
+        }
+
+        function ringAlarm() {
+            const status = document.getElementById('status');
+            status.textContent = '🔔 アラーム発動！';
+            status.className = 'status active alarm-ringing';
+            document.querySelector('.container').classList.add('alarm-ringing');
+
+            // ブラウザ音を再生（簡易版）
+            playAlarmSound();
+
+            // 10秒間アラームを鳴らす
+            setTimeout(() => {
+                if (isAlarmActive === false) {
+                    stopAlarm();
+                }
+            }, 10000);
+        }
+
+        function playAlarmSound() {
+            // Web Audio API でビープ音を生成
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800; // Hz
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+
+            // 3回繰り返す
+            for (let i = 1; i < 3; i++) {
+                const osc = audioContext.createOscillator();
+                osc.connect(gainNode);
+                osc.frequency.value = 800;
+                osc.type = 'sine';
+                osc.start(audioContext.currentTime + i * 0.6);
+                osc.stop(audioContext.currentTime + i * 0.6 + 0.5);
+            }
+        }
+
+        function stopAlarm() {
+            isAlarmActive = false;
+            if (checkInterval) clearInterval(checkInterval);
+
+            document.getElementById('stopBtn').disabled = true;
+            document.querySelector('.container').classList.remove('alarm-ringing');
+
+            const status = document.getElementById('status');
+            status.textContent = 'アラーム停止';
+            status.className = 'status inactive';
+        }
+    </script>
+</body>
+</html>
